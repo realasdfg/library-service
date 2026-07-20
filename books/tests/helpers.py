@@ -14,7 +14,7 @@ def sample_book(**params):
         "title": "Sample title",
         "author": "Sample author",
         "cover": Book.CoverChoices.HARD,
-        "inventory": "2",
+        "inventory": 2,
         "daily_fee": "1.45",
     }
     defaults.update(params)
