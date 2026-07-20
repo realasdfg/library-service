@@ -1,5 +1,6 @@
 from decimal import Decimal
-from unittest import TestCase
+
+from django.test import TestCase
 
 from books.models import Book
 

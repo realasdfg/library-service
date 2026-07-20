@@ -1,14 +1,10 @@
-from unittest import TestCase
-
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 
 User = get_user_model()
 
 
 class UserTests(TestCase):
-    def tearDown(self):
-        User.objects.all().delete()
-
     def test_create_user_with_email_successful(self):
         email = "test@example.com"
         password = "testpass123"
