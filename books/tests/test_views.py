@@ -1,32 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from books.models import Book
 from books.serializers import BookSerializer
+from books.tests.helpers import URL, detail_url, sample_book
 
 User = get_user_model()
-
-URL = reverse("books:book-list")
-
-
-def detail_url(book_id):
-    return reverse("books:book-detail", args=[book_id])
-
-
-def sample_book(**params):
-    defaults = {
-        "title": "Sample title",
-        "author": "Sample author",
-        "cover": Book.CoverChoices.HARD,
-        "inventory": "2",
-        "daily_fee": "1.45",
-    }
-    defaults.update(params)
-
-    return Book.objects.create(**defaults)
 
 
 class UnauthenticatedBooksTest(TestCase):
