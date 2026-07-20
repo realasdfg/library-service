@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-from books.tests.test_views import sample_book
+from books.tests.helpers import sample_book
 from borrowings.models import Borrowing
 
 User = get_user_model()

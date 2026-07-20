@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.test import TestCase
 
-from books.tests.test_views import sample_book
+from books.tests.helpers import sample_book
 from borrowings.models import Borrowing
 
 User = get_user_model()
