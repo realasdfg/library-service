@@ -1,8 +1,11 @@
+from datetime import date, timedelta
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from books.tests.helpers import sample_book
 from borrowings.models import Borrowing
 from borrowings.serializers import BorrowingReadSerializer
 from borrowings.tests.helpers import URL, detail_url, sample_borrowing
@@ -55,3 +58,18 @@ class AuthenticatedBorrowingTest(TestCase):
         self.assertIn(serializer1.data, res.data)
         self.assertIn(serializer2.data, res.data)
         self.assertNotIn(serializer3.data, res.data)
+
+    def test_borrowing_create(self):
+        book = sample_book(inventory=1)
+        data = {
+            "expected_return_date": date.today() + timedelta(days=1),
+            "book": book.pk,
+        }
+        res = self.client.post(URL, data)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        borrowing = Borrowing.objects.get(pk=res.data["id"])
+        self.assertEqual(borrowing.expected_return_date, data["expected_return_date"])
+        self.assertIsNone(borrowing.actual_return_date)
+        self.assertEqual(borrowing.borrow_date, date.today())
+        self.assertEqual(borrowing.book, book)
+        self.assertEqual(borrowing.user, self.user)
