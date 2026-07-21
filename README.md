@@ -22,34 +22,53 @@ browse books, administrator-only catalogue management, and user-scoped borrowing
 - drf-spectacular / Swagger UI
 - SQLite (default development database)
 
-## Getting started
+## Quick start with Docker
 
-```bash
-git clone <your-repository-url>
-cd library_service
+1. Create your environment file:
 
+   ```powershell
+   Copy-Item .env.template .env
+   ```
+
+2. Set the PostgreSQL variables in `.env`. For the included Compose setup, use:
+
+   ```env
+   SECRET_KEY=your-key
+   DEBUG=True
+   POSTGRES_DB=library
+   POSTGRES_USER=library_user
+   POSTGRES_PASSWORD=change-me
+   POSTGRES_HOST=db
+   POSTGRES_PORT=5432
+   PGDATA=/var/lib/postgresql/data/pgdata
+   ```
+
+3. Build and start the services:
+
+   ```powershell
+   docker-compose up --build
+   ```
+
+   Migrations are applied automatically. The API will be available at `http://localhost:8000/`.
+
+4. Optionally create an administrator:
+
+   ```powershell
+   docker-compose exec app python manage.py createsuperuser
+   ```
+
+## Local development
+
+Ensure PostgreSQL is running and provide its connection settings as environment variables (the `.env` file is used by
+Docker Compose). Then:
+
+```powershell
 python -m venv .venv
-```
-
-Activate the virtual environment:
-
-```bash
-# Windows PowerShell
-.venv\Scripts\Activate
-
-# macOS / Linux
-source .venv/bin/activate
-```
-
-Install dependencies, apply migrations, and start the server:
-
-```bash
+.\.venv\Scripts\Activate
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
-
-The API is then available at `http://127.0.0.1:8000/api/v1/`.
 
 To create an administrator who can manage books:
 
