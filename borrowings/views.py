@@ -2,6 +2,7 @@ from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
+from borrowings.filters import BorrowingFilter
 from borrowings.models import Borrowing
 from borrowings.serializers import BorrowingCreateSerializer, BorrowingReadSerializer
 
@@ -9,11 +10,17 @@ from borrowings.serializers import BorrowingCreateSerializer, BorrowingReadSeria
 class BorrowingViewSet(mixins.CreateModelMixin, ReadOnlyModelViewSet):
     queryset = Borrowing.objects.all()
     permission_classes = (IsAuthenticated,)
+    filterset_class = BorrowingFilter
 
     def get_queryset(self):
-        queryset = self.queryset.filter(user=self.request.user)
+        queryset = self.queryset
+
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(user=self.request.user)
+
         if self.action in ["list", "retrieve"]:
             queryset = queryset.select_related("book")
+
         return queryset
 
     def get_serializer_class(self):
