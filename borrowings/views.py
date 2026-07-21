@@ -2,6 +2,7 @@ from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
+from borrowings.filters import BorrowingFilter
 from borrowings.models import Borrowing
 from borrowings.serializers import BorrowingCreateSerializer, BorrowingReadSerializer
 
@@ -9,6 +10,7 @@ from borrowings.serializers import BorrowingCreateSerializer, BorrowingReadSeria
 class BorrowingViewSet(mixins.CreateModelMixin, ReadOnlyModelViewSet):
     queryset = Borrowing.objects.all()
     permission_classes = (IsAuthenticated,)
+    filterset_class = BorrowingFilter
 
     def get_queryset(self):
         queryset = self.queryset
