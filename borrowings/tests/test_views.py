@@ -2,6 +2,7 @@ from datetime import date, timedelta
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -104,6 +105,40 @@ class AuthenticatedBorrowingTest(TestCase):
         self.assertEqual(borrowing.borrow_date, date.today())
         self.assertEqual(borrowing.book, book)
         self.assertEqual(borrowing.user, self.user)
+
+    def test_return_borrowing(self):
+        book_inventory_start = 1
+        book = sample_book(inventory=book_inventory_start)
+        borrowing = sample_borrowing(actual_return_date=None, book=book, user=self.user)
+        url = reverse("borrowings:borrowing-return-borrowing", args=[borrowing.id])
+        res = self.client.post(url)
+        borrowing.refresh_from_db()
+        book.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(borrowing.actual_return_date, date.today())
+        self.assertEqual(book.inventory, book_inventory_start + 1)
+
+    def test_return_already_returned_borrowing(self):
+        book_inventory_start = 1
+        book = sample_book(inventory=book_inventory_start)
+        borrowing = sample_borrowing(book=book, user=self.user)
+        url = reverse("borrowings:borrowing-return-borrowing", args=[borrowing.id])
+        res = self.client.post(url)
+        borrowing.refresh_from_db()
+        book.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(book.inventory, book_inventory_start)
+
+    def test_return_other_users_borrowing(self):
+        book_inventory_start = 1
+        book = sample_book(inventory=book_inventory_start)
+        borrowing = sample_borrowing(book=book)
+        url = reverse("borrowings:borrowing-return-borrowing", args=[borrowing.id])
+        res = self.client.post(url)
+        borrowing.refresh_from_db()
+        book.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(book.inventory, book_inventory_start)
 
 
 class AdminBorrowingTest(TestCase):
