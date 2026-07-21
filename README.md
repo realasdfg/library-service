@@ -125,19 +125,20 @@ Access tokens expire after 24 hours; refresh tokens expire after 7 days. Use `PO
 
 ## Endpoints
 
-| Resource   | Method                   | Endpoint                       | Access        | Description                                  |
-|------------|--------------------------|--------------------------------|---------------|----------------------------------------------|
-| Users      | `POST`                   | `/api/v1/users/`               | Public        | Register a user.                             |
-| Users      | `POST`                   | `/api/v1/users/token/`         | Public        | Obtain JWT access and refresh tokens.        |
-| Users      | `POST`                   | `/api/v1/users/token/refresh/` | Public        | Refresh an access token.                     |
-| Users      | `GET`, `PUT`, `PATCH`    | `/api/v1/users/me/`            | Authenticated | Retrieve or update the current user.         |
-| Books      | `GET`                    | `/api/v1/books/`               | Public        | List books.                                  |
-| Books      | `GET`                    | `/api/v1/books/{id}/`          | Public        | Retrieve a book.                             |
-| Books      | `POST`                   | `/api/v1/books/`               | Admin         | Create a book.                               |
-| Books      | `PUT`, `PATCH`, `DELETE` | `/api/v1/books/{id}/`          | Admin         | Update or delete a book.                     |
-| Borrowings | `GET`                    | `/api/v1/borrowings/`          | Authenticated | List borrowings visible to the current user. |
-| Borrowings | `GET`                    | `/api/v1/borrowings/{id}/`     | Authenticated | Retrieve a visible borrowing.                |
-| Borrowings | `POST`                   | `/api/v1/borrowings/`          | Authenticated | Borrow an in-stock book.                     |
+| Resource   | Method                   | Endpoint                          | Access        | Description                                  |
+|------------|--------------------------|-----------------------------------|---------------|----------------------------------------------|
+| Users      | `POST`                   | `/api/v1/users/`                  | Public        | Register a user.                             |
+| Users      | `POST`                   | `/api/v1/users/token/`            | Public        | Obtain JWT access and refresh tokens.        |
+| Users      | `POST`                   | `/api/v1/users/token/refresh/`    | Public        | Refresh an access token.                     |
+| Users      | `GET`, `PUT`, `PATCH`    | `/api/v1/users/me/`               | Authenticated | Retrieve or update the current user.         |
+| Books      | `GET`                    | `/api/v1/books/`                  | Public        | List books.                                  |
+| Books      | `GET`                    | `/api/v1/books/{id}/`             | Public        | Retrieve a book.                             |
+| Books      | `POST`                   | `/api/v1/books/`                  | Admin         | Create a book.                               |
+| Books      | `PUT`, `PATCH`, `DELETE` | `/api/v1/books/{id}/`             | Admin         | Update or delete a book.                     |
+| Borrowings | `GET`                    | `/api/v1/borrowings/`             | Authenticated | List borrowings visible to the current user. |
+| Borrowings | `GET`                    | `/api/v1/borrowings/{id}/`        | Authenticated | Retrieve a visible borrowing.                |
+| Borrowings | `POST`                   | `/api/v1/borrowings/{id}/return/` | Authenticated | Return a borrowed book.                      |
+| Borrowings | `POST`                   | `/api/v1/borrowings/`             | Authenticated | Borrow an in-stock book.                     |
 
 ## Example requests
 
