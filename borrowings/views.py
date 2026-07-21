@@ -11,9 +11,14 @@ class BorrowingViewSet(mixins.CreateModelMixin, ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        queryset = self.queryset.filter(user=self.request.user)
+        queryset = self.queryset
+
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(user=self.request.user)
+
         if self.action in ["list", "retrieve"]:
             queryset = queryset.select_related("book")
+
         return queryset
 
     def get_serializer_class(self):
