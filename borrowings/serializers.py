@@ -8,6 +8,10 @@ from books.serializers import BookSerializer
 from borrowings.models import Borrowing
 
 
+class EmptySerializer(serializers.Serializer):
+    pass
+
+
 class BorrowingReadSerializer(serializers.ModelSerializer):
     book = BookSerializer(read_only=True)
 

@@ -25,5 +25,9 @@ class Borrowing(models.Model):
         ]
         ordering = ["-borrow_date"]
 
+    @property
+    def is_active(self):
+        return self.actual_return_date is None
+
     def __str__(self):
         return f"{self.book.title} - {self.user.email}"

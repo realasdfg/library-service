@@ -1,12 +1,22 @@
+from datetime import date
+
+from django.db import transaction
+from django.utils import timezone
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
-from rest_framework import mixins
+from rest_framework import mixins, status
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from borrowings.filters import BorrowingFilter
 from borrowings.models import Borrowing
-from borrowings.serializers import BorrowingCreateSerializer, BorrowingReadSerializer
+from borrowings.serializers import (
+    BorrowingCreateSerializer,
+    BorrowingReadSerializer,
+    EmptySerializer,
+)
 
 
 @extend_schema_view(
@@ -59,7 +69,33 @@ class BorrowingViewSet(mixins.CreateModelMixin, ReadOnlyModelViewSet):
     def get_serializer_class(self):
         if self.action == "create":
             return BorrowingCreateSerializer
+        if self.action == "return_borrowing":
+            return EmptySerializer
         return BorrowingReadSerializer
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    @action(
+        methods=["POST"],
+        detail=True,
+        url_path="return",
+    )
+    def return_borrowing(self, request, pk=None):
+        borrowing = self.get_object()
+        if not borrowing.is_active:
+            return Response(
+                {"detail": "This borrowing has already been returned."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        with transaction.atomic():
+            borrowing.actual_return_date = timezone.now().date()
+            borrowing.save(update_fields=["actual_return_date"])
+
+            book = borrowing.book
+            book.inventory += 1
+            book.save(update_fields=["inventory"])
+
+        serializer = BorrowingReadSerializer(borrowing)
+        return Response(serializer.data, status=status.HTTP_200_OK)
